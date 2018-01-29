@@ -344,14 +344,14 @@ void Apx::NodeData::processNode(QByteArray &bytes)
    }
    if (inputLen > 0)
    {
-      mInPortDataFile = new Apx::InputFile(mNode->getName()+QString(".in"), inputLen);
+      mInPortDataFile = new Apx::InputFile(mNode->getName()+Apx::File::cInSuffix, inputLen);
       mInPortDataFile->setNodeDataHandler(this);
    }
    if (outputLen > 0)
    {
-      mOutPortDataFile = new Apx::OutputFile(mNode->getName()+QString(".out"), outputLen);
+      mOutPortDataFile = new Apx::OutputFile(mNode->getName()+Apx::File::cOutSuffix, outputLen);
    }
-   mDefinitionFile = new Apx::OutputFile(mNode->getName()+QString(".apx"), bytes.length());
+   mDefinitionFile = new Apx::OutputFile(mNode->getName()+Apx::File::cDefinitionSuffix, bytes.length());
    mDefinitionFile->write((const quint8*) bytes.constData(), 0, (quint32) bytes.length());
 
    populatePortDataMap();

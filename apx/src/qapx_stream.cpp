@@ -618,7 +618,7 @@ QApxOStreamBuf::~QApxOStreamBuf()
 void QApxOStreamBuf::apxStartTextMsg()
 {
    mBuf.clear();
-   mBuf.append("APX/");
+   mBuf.append(QStringLiteral("APX/"));
    mBuf.append(QByteArray::number(mMajorVersion));
    mBuf.append('.');
    mBuf.append(QByteArray::number(mMinorVersion));
@@ -632,16 +632,16 @@ void QApxOStreamBuf::apxEndTextMsg()
 
 void QApxOStreamBuf::apxNodeNameRqst()
 {
-   mBuf.append("?N*\n");
+   mBuf.append(QStringLiteral("?N*\n"));
 }
 
 int QApxOStreamBuf::apxNodeNameRsp(const QByteArray &name)
 {
    if(name.length()>0)
    {
-      mBuf.append("+N\"");
+      mBuf.append(QStringLiteral("+N\""));
       mBuf.append(name);
-      mBuf.append("\"\n");
+      mBuf.append(QStringLiteral("\"\n"));
       return 0;
    }
    return -1;
@@ -651,9 +651,9 @@ int QApxOStreamBuf::apxNodeQueryRqst(const QByteArray &name)
 {
    if(name.length()>0)
    {
-      mBuf.append("?N\"");
+      mBuf.append(QStringLiteral("?N\""));
       mBuf.append(name);
-      mBuf.append("\"\n");
+      mBuf.append(QStringLiteral("\"\n"));
       return 0;
    }
    return -1;

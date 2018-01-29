@@ -5,6 +5,10 @@
 
 using namespace std;
 
+const QString Apx::File::cDefinitionSuffix = QStringLiteral(".apx");
+const QString Apx::File::cInSuffix = QStringLiteral(".in");
+const QString Apx::File::cOutSuffix = QStringLiteral(".out");
+
 Apx::File::File(QString name, quint32 length):RemoteFile::File(name,length),mNodeDataHandler(NULL)
 {
    mData.resize((int)length);
