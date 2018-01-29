@@ -94,20 +94,20 @@ void Apx::NodeData::inPortDataWriteNotify(quint32 offset, QByteArray &data)
 
    if ( offset+data.length() <= (quint32)mInPortDataMapLen)
    {
+      QVariant value;
       quint32 endOffset=offset+(quint32) data.length();
       while(offset<endOffset)
       {
          quint32 dataLen = (quint32) data.length();
-         PortDataElement* dataElement = mInPortDataMap[offset];
+         const PortDataElement* const dataElement = mInPortDataMap[offset];
          if (dataElement != NULL)
          {
             if (dataElement->length <= dataLen)
             {
-               QVariant value;
-               int portIndex = dataElement->port->getPortIndex();
-               bool result = getRequirePortValueInternal(portIndex, data, value);
+               const int portIndex = dataElement->port->getPortIndex();
+               const bool result = getRequirePortValueInternal(portIndex, data, value);
                if ( (result == true) && (mNodeHandler != NULL) )
-               {                  
+               {
                   mNodeHandler->inPortDataNotification(this, dataElement->port, value);
                }
                if ( dataLen > dataElement->length)
@@ -186,6 +186,7 @@ bool Apx::NodeData::setProvidePortValue(int portId, QVariant &value)
             exception = mPackVM.exec(progInfo.prog,serializedData,list);
          }
          break;
+      case VTYPE_INVALID: // Intentional fallthru
       default:
          break;
       }
@@ -435,7 +436,7 @@ void Apx::NodeData::writeProvidePortRaw(int portId, const char *pSrc, int length
 Apx::PortDataElement::PortDataElement(QApxSimplePort *_port, quint32 _offset, quint32 _length):
    port(_port), offset(_offset),length(_length){}
 
-Apx::PackUnpackProg::PackUnpackProg(QApxDataElement *pElement, QByteArray _prog)
+Apx::PackUnpackProg::PackUnpackProg(QApxDataElement *pElement, const QByteArray& _prog)
    :prog(_prog)
 {
    Q_ASSERT(pElement != 0);
@@ -466,12 +467,12 @@ Apx::PackUnpackProg::PackUnpackProg(QApxDataElement *pElement, QByteArray _prog)
 
 bool Apx::NodeData::getRequirePortValueInternal(int portIndex, QByteArray &data, QVariant &value)
 {
-   QVariantMap map;
-   QVariantList list;
+   QVariantMap* tempMap = NULL;
+   QVariantList* tempList = NULL;
    if ((mNode != NULL) && (portIndex >= 0) && (portIndex < mNode->getNumRequirePorts()))
    {
-      PackUnpackProg unpackInfo = mInPortUnpackProg.at(portIndex);
-      int exception = VM_EXCEPTION_NO_EXCEPTION;
+      const PackUnpackProg& unpackInfo = mInPortUnpackProg.at(portIndex);
+      int exception = VM_EXCEPTION_INVALID_VARIANT_TYPE;
 
       switch(unpackInfo.vtype)
       {
@@ -479,19 +480,24 @@ bool Apx::NodeData::getRequirePortValueInternal(int portIndex, QByteArray &data,
          exception = mUnpackVM.exec(unpackInfo.prog,data,value);
          break;
       case VTYPE_MAP:
-         exception = mUnpackVM.exec(unpackInfo.prog,data,map);
+         tempMap = new QVariantMap();
+         exception = mUnpackVM.exec(unpackInfo.prog,data,*tempMap);
          if(exception == VM_EXCEPTION_NO_EXCEPTION)
          {
-            value = map;
+            value = *tempMap;
          }
+         delete tempMap;
          break;
       case VTYPE_LIST:
-         exception = mUnpackVM.exec(unpackInfo.prog,data,list);
+         tempList = new QVariantList();
+         exception = mUnpackVM.exec(unpackInfo.prog,data,*tempList);
          if(exception == VM_EXCEPTION_NO_EXCEPTION)
          {
-            value = list;
+            value = *tempList;
          }
+         delete tempList;
          break;
+      case VTYPE_INVALID: // Intentional fallthru
       default:
          break;
       }

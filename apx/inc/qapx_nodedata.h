@@ -30,9 +30,9 @@ namespace Apx
 
    struct PackUnpackProg
    {
-      VariantType vtype; //what QVariant it expects
-      QByteArray  prog; //byte code program
-      PackUnpackProg(QApxDataElement *pElement, QByteArray _prog);
+      VariantType vtype;  //what QVariant it expects
+      QByteArray  prog;   //byte code program
+      PackUnpackProg(QApxDataElement *pElement, const QByteArray& _prog);
    };
 
    /**

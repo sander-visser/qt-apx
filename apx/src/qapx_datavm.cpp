@@ -109,11 +109,10 @@ int DataVM::execProg(const QByteArray &prog)
    while(pNext<pEnd)
    {
       int opCode;
-      const char *pMark=pNext;
+      const char* const pMark=pNext;
       pNext=parseOpCode(pNext,pEnd,opCode);
       if (pNext>pMark)
       {
-         pMark=pNext;
          pNext = execOperation(opCode,pNext,pEnd,exception);
          if ( exception != VM_EXCEPTION_NO_EXCEPTION )
          {
