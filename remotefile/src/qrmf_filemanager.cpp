@@ -3,8 +3,6 @@
 #include "qrmf_filemanager.h"
 #include "qrmf_proto.h"
 
-#define DEFAULT_PACK_BUF_LEN 1024
-
 namespace RemoteFile
 {
 
