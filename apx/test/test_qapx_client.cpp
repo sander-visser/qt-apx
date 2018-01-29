@@ -1,7 +1,6 @@
 #include "test_qapx_client.h"
 #include "qapx_client.h"
 #include <QSignalSpy>
-#include <QDebug>
 #include <QtCore>
 
 void TestApxClient::createClient()

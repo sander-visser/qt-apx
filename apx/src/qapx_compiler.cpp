@@ -1,8 +1,5 @@
 #include "qapx_compiler.h"
-#include <QDebug>
 #include <limits>
-
-#include <QVariant>
 
 #define MAX_PACK_LEN 16777215 //should be equal to 2^24-1
 

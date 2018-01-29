@@ -1,6 +1,7 @@
 #include "qapx_datavm.h"
 #include "qapx_vmbase.h"
 #include <QtEndian>
+#include <QDebug>
 
 namespace Apx
 {

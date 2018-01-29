@@ -1,5 +1,4 @@
 #include <QtGlobal>
-#include <QDebug>
 #include <cstring>
 #include "qapx_file.h"
 #include "qapx_nodedata.h"
