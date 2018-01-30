@@ -32,10 +32,10 @@ namespace Apx
       //client user API
       Q_DECL_DEPRECATED void setProvidePort(int portId, QVariant &value);
       void setProvidePortValue(int portId, QVariant &value);
-      int findProvidePortId(QString &name);
-      int findProvidePortId(const char *name);
-      int findRequirePortId(QString &name);
-      int findRequirePortId(const char *name);
+      int findProvidePortId(const QString &name);
+      int findProvidePortId(const char* const name);
+      int findRequirePortId(const QString &name);
+      int findRequirePortId(const char* const name);
 
       Apx::NodeData *getNodeData() {return &mNodeData;}
 
@@ -53,7 +53,7 @@ private slots:
       void onDisconnected();
 
   signals:
-      void requirePortData(int portId, QString &portName, QVariant &value);
+      void requirePortData(int portId, const QString &portName, const QVariant &value);
       void connected();
       void disconnected();
    };

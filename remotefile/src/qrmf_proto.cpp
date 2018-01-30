@@ -121,7 +121,7 @@ int packFileInfo(char *pDest, int destLimit, File &file)
          qToLittleEndian<quint16>(file.mFileType, p); p+=sizeof(quint16);
          qToLittleEndian<quint16>(file.mDigestType, p); p+=sizeof(quint16);
          memcpy(p,file.mDigestData,RMF_DIGEST_SIZE); p+=RMF_DIGEST_SIZE;
-         memcpy(p, file.mName.toLatin1().data(), nameLen); p+=nameLen;
+         memcpy(p, file.mName.toLatin1().constData(), nameLen); p+=nameLen;
          p[0]=0;
          return needed;
       }

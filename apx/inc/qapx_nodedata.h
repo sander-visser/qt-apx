@@ -79,8 +79,8 @@ namespace Apx
       //NodeData API
       Apx::Node* load(const char *apxText);
       Apx::Node* load(QString &apxText);
-      int findProvidePortId(const char *name) const;
-      int findRequirePortId(const char *name) const;
+      int findProvidePortId(const char* const name) const;
+      int findRequirePortId(const char* const name) const;
       bool setProvidePortValue(int portId, QVariant &value);
       bool getRequirePortValue(const QApxSimplePort *port, QVariant &value);
       bool getRequirePortValue(int portIndex, QVariant &value);

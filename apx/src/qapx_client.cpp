@@ -82,22 +82,22 @@ void Client::setProvidePortValue(int portId, QVariant &value)
    mNodeData.setProvidePortValue(portId,value);
 }
 
-int Client::findProvidePortId(QString &name)
+int Client::findProvidePortId(const QString &name)
 {
    return mNodeData.findProvidePortId(qUtf8Printable(name));
 }
 
-int Client::findProvidePortId(const char *name)
+int Client::findProvidePortId(const char* const name)
 {
    return mNodeData.findProvidePortId(name);
 }
 
-int Client::findRequirePortId(QString &name)
+int Client::findRequirePortId(const QString &name)
 {
    return mNodeData.findRequirePortId(qUtf8Printable(name));
 }
 
-int Client::findRequirePortId(const char *name)
+int Client::findRequirePortId(const char* const name)
 {
    return mNodeData.findRequirePortId(name);
 }

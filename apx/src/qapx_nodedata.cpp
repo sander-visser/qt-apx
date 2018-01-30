@@ -74,9 +74,12 @@ bool Apx::NodeData::getRequirePortValue(int portIndex, QVariant &value)
       const PortDataElement &dataElement = mInPortDataElements.at(portIndex);
       quint32 offset = dataElement.offset;
       quint32 length = dataElement.length;
-      QByteArray tmpData(length, 0); //TODO: How to get array of unitialized data instead?
-      mInPortDataFile->read((quint8*) tmpData.data(), offset, length);
-      return getRequirePortValueInternal(portIndex, tmpData, value);
+      QByteArray tmpData;
+      tmpData.resize(length);
+      if ((int)length == mInPortDataFile->read((quint8*) tmpData.data(), offset, length))
+      {
+         return getRequirePortValueInternal(portIndex, tmpData, value);
+      }
    }
    return false;
 }
@@ -134,7 +137,7 @@ void Apx::NodeData::inPortDataWriteNotify(quint32 offset, QByteArray &data)
  * @param name
  * @return non-negative id of provide port. -1 on failure.
  */
-int Apx::NodeData::findProvidePortId(const char *name) const
+int Apx::NodeData::findProvidePortId(const char* const name) const
 {
    if ( (mNode == NULL) || (name == NULL) )
    {
@@ -219,7 +222,7 @@ bool Apx::NodeData::setProvidePortValue(int portId, QVariant &value)
  * @param name
  * @return non-negative id of require port. -1 on failure.
  */
-int Apx::NodeData::findRequirePortId(const char *name) const
+int Apx::NodeData::findRequirePortId(const char* const name) const
 {
    if ( (mNode == NULL) || (name == NULL) )
    {
@@ -295,6 +298,7 @@ void Apx::NodeData::processNode(QByteArray &bytes)
    int i;
    int inputLen=0;
    int outputLen=0;
+   QByteArray pack_unpack_prog;
    for (i=0;i<numRequirePorts;i++)
    {
       QApxSimplePort *port = mNode->getRequirePortById(i);
@@ -305,11 +309,11 @@ void Apx::NodeData::processNode(QByteArray &bytes)
       PortDataElement elem(port, (quint32) inputLen, (quint32) pElement->packLen);
       mInPortDataElements.append(elem);
       inputLen+=pElement->packLen;
-      QByteArray unpack_prog;
-      int result = compiler.genUnpackData(unpack_prog, pElement);
+      pack_unpack_prog.clear();
+      int result = compiler.genUnpackData(pack_unpack_prog, pElement);
       if (result == 0)
       {
-         mInPortUnpackProg.append(PackUnpackProg(pElement, unpack_prog));
+         mInPortUnpackProg.append(PackUnpackProg(pElement, pack_unpack_prog));
       }
       else
       {
@@ -328,11 +332,11 @@ void Apx::NodeData::processNode(QByteArray &bytes)
       Q_ASSERT(pElement != NULL);
       mOutPortDataElements.append(PortDataElement(port, (quint32) outputLen, (quint32) pElement->packLen));
       outputLen+=pElement->packLen;
-      QByteArray pack_prog;
-      int result = compiler.genPackData(pack_prog, pElement);
+      pack_unpack_prog.clear();
+      int result = compiler.genPackData(pack_unpack_prog, pElement);
       if (result == 0)
       {
-         mOutPortPackProg.append(PackUnpackProg(pElement, pack_prog));
+         mOutPortPackProg.append(PackUnpackProg(pElement, pack_unpack_prog));
       }
       else
       {
