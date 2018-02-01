@@ -47,7 +47,7 @@ SocketAdapter::~SocketAdapter()
    case RMF_SOCKET_TYPE_NONE:
       break;
    case RMF_SOCKET_TYPE_TCP:
-      if(mTcpSocket->state() != 0)
+      if(mTcpSocket->state() != QAbstractSocket::UnconnectedState)
       {
          QObject::disconnect(mTcpSocket, SIGNAL(connected(void)), this, SLOT(onConnected(void)));
          QObject::disconnect(mTcpSocket, SIGNAL(disconnected(void)), this, SLOT(onDisconnected(void)));
@@ -55,7 +55,7 @@ SocketAdapter::~SocketAdapter()
       }
 	  break;
    case RMF_SOCKET_TYPE_LOCAL:
-      if(mLocalSocket->state() != 0)
+      if(mLocalSocket->state() != QLocalSocket::UnconnectedState)
       {
          QObject::disconnect(mLocalSocket, SIGNAL(connected(void)), this, SLOT(onConnected(void)));
          QObject::disconnect(mLocalSocket, SIGNAL(disconnected(void)), this, SLOT(onDisconnected(void)));
@@ -73,7 +73,7 @@ SocketAdapter::~SocketAdapter()
 }
 
 
-int SocketAdapter::connectTcp(QHostAddress address, quint16 port)
+int SocketAdapter::connectTcp(const QHostAddress& address, quint16 port)
 {
    if (mSocketType == RMF_SOCKET_TYPE_NONE)
    {

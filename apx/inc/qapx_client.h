@@ -22,8 +22,8 @@ namespace Apx
       virtual ~Client();
 
       void createLocalNode(const char *apxText);
-      void createLocalNode(QString &apxText);
-      void connectTcp(QHostAddress address,quint16 port);
+      void createLocalNode(const QString &apxText);
+      void connectTcp(const QHostAddress& address,quint16 port);
       void close();
 
       //NodeHandler API
@@ -32,10 +32,10 @@ namespace Apx
       //client user API
       Q_DECL_DEPRECATED void setProvidePort(int portId, QVariant &value);
       void setProvidePortValue(int portId, QVariant &value);
-      int findProvidePortId(const QString &name);
-      int findProvidePortId(const char* const name);
-      int findRequirePortId(const QString &name);
-      int findRequirePortId(const char* const name);
+      int findProvidePortId(const QString &name) const;
+      int findProvidePortId(const char* const name) const;
+      int findRequirePortId(const QString &name) const;
+      int findRequirePortId(const char* const name) const;
 
       Apx::NodeData *getNodeData() {return &mNodeData;}
 

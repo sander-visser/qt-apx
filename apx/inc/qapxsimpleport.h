@@ -6,10 +6,10 @@ class QApxSimplePort
 public:
    QApxSimplePort(const char *name, const char *dsg, const char *attr);
    virtual ~QApxSimplePort();
-   const char *getName(){return mName;}
-   const char *getDataSignature(){return mDsg;}
-   const char *getAttr(){return mAttr;}
-   virtual bool isRequire() = 0;
+   const char *getName() const {return mName;}
+   const char *getDataSignature() const {return mDsg;}
+   const char *getAttr() const {return mAttr;}
+   virtual bool isRequire() const = 0;
    int getPortIndex() const {return mPortIndex;}
    void setPortIndex(int value){mPortIndex=value;}
 protected:
@@ -23,14 +23,14 @@ class QApxSimpleRequirePort : public QApxSimplePort
 {
 public:
    QApxSimpleRequirePort(const char *name, const char *dsg, const char *attr);
-   bool isRequire(){return true;}
+   bool isRequire() const {return true;}
 };
 
 class QApxSimpleProvidePort : public QApxSimplePort
 {
 public:
    QApxSimpleProvidePort(const char *name, const char *dsg, const char *attr);
-   bool isRequire(){return false;}
+   bool isRequire() const {return false;}
 };
 
 

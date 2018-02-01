@@ -40,12 +40,12 @@ void Client::createLocalNode(const char *apxText)
    mNodeData.setNodeHandler(this);
 }
 
-void Client::createLocalNode(QString &apxText)
+void Client::createLocalNode(const QString &apxText)
 {
    createLocalNode(apxText.toUtf8().constData());
 }
 
-void Client::connectTcp(QHostAddress address, quint16 port)
+void Client::connectTcp(const QHostAddress& address, quint16 port)
 {
    if (mSocketAdapter == NULL)
    {
@@ -82,22 +82,22 @@ void Client::setProvidePortValue(int portId, QVariant &value)
    mNodeData.setProvidePortValue(portId,value);
 }
 
-int Client::findProvidePortId(const QString &name)
+int Client::findProvidePortId(const QString &name) const
 {
    return mNodeData.findProvidePortId(qUtf8Printable(name));
 }
 
-int Client::findProvidePortId(const char* const name)
+int Client::findProvidePortId(const char* const name) const
 {
    return mNodeData.findProvidePortId(name);
 }
 
-int Client::findRequirePortId(const QString &name)
+int Client::findRequirePortId(const QString &name) const
 {
    return mNodeData.findRequirePortId(qUtf8Printable(name));
 }
 
-int Client::findRequirePortId(const char* const name)
+int Client::findRequirePortId(const char* const name) const
 {
    return mNodeData.findRequirePortId(name);
 }
