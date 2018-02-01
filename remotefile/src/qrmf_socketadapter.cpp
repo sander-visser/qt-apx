@@ -10,6 +10,8 @@
 #include "qscan.h"
 
 #define RMF_SOCKET_BUFFER_SIZE_LIMIT 32 * 1024
+// Define to get qDebug socket status
+//#define RMF_SOCKET_VERBOSE
 
 namespace RemoteFile
 {
@@ -53,7 +55,7 @@ SocketAdapter::~SocketAdapter()
          QObject::disconnect(mTcpSocket, SIGNAL(disconnected(void)), this, SLOT(onDisconnected(void)));
          QObject::disconnect(mTcpSocket, SIGNAL(readyRead(void)), this, SLOT(onReadyread(void)));
       }
-	  break;
+      break;
    case RMF_SOCKET_TYPE_LOCAL:
       if(mLocalSocket->state() != QLocalSocket::UnconnectedState)
       {
@@ -232,12 +234,18 @@ void SocketAdapter::onConnected()
 {
    mErrorCode = RMF_ERR_NONE;
    m_isAcknowledgeSeen=false;
-   sendGreetingHeader();   
+   sendGreetingHeader();
+#ifdef RMF_SOCKET_VERBOSE
+   qDebug()<<"[RMF_SOCKET_ADAPTER] onConnected";
+#endif
    emit connected();
 }
 
 void SocketAdapter::onDisconnected()
-{   
+{
+#ifdef RMF_SOCKET_VERBOSE
+   qDebug()<<"[RMF_SOCKET_ADAPTER] onDisconnected";
+#endif
    mReconnectTimer.start(RMF_SOCKET_ADAPTER_RECONNECT_TIMER_MS);
    if (mReceiveHandler != 0)
    {
@@ -257,6 +265,7 @@ void SocketAdapter::onReadyread()
    }
    if ( (mErrorCode==RMF_ERR_NONE) && (readAvail < 0) )
    {
+      qDebug() << "getSocketReadAvail failed\n";
       setError(RMF_ERR_SOCKET_READ_AVAIL_FAIL);
    }
    if (mErrorCode != RMF_ERR_NONE)
@@ -268,7 +277,9 @@ void SocketAdapter::onReadyread()
 
 void SocketAdapter::onReconnectTimeout(void)
 {
+#ifdef RMF_SOCKET_VERBOSE
    qDebug() << "[RMF_SOCKET_ADAPTER] onReconnectTimeout";
+#endif
    switch(mSocketType)
    {
    case RMF_SOCKET_TYPE_NONE:
@@ -297,7 +308,7 @@ void SocketAdapter::onLocalSocketError(QLocalSocket::LocalSocketError error)
    setError(RMF_ERR_SOCKET_EVENT, (qint64) error);
    mReconnectTimer.start(RMF_SOCKET_ADAPTER_RECONNECT_TIMER_MS);
    close();
-}   
+}
 
 char *SocketAdapter::prepareReceive(quint32 readLen)
 {
@@ -388,18 +399,17 @@ qint64 SocketAdapter::readSocket(char *pDest, quint32 readLen)
 }
 
 void SocketAdapter::readHandler(quint32 readAvail)
-{   
+{
    char *pDest = prepareReceive(readAvail);
-   if(pDest != 0)
+   if(pDest != NULL)
    {
       qint64 result = readSocket(pDest, readAvail);
 
       if (result > 0)
       {
-         char *pStartOfReceiveBuffer = mReceiveBuffer.data();
-         const char *pBegin = pStartOfReceiveBuffer;
-         const char *pEnd = pDest+result;
-         const char *pNext = parseRemoteFileData(pBegin, pEnd);
+         char* const pStartOfReceiveBuffer = mReceiveBuffer.data();
+         const char* const pEnd = pDest+result;
+         const char* pNext = parseRemoteFileData(pStartOfReceiveBuffer, pEnd);
          if (pNext == NULL)
          {
             setError(RMF_ERR_BAD_MSG);
@@ -411,9 +421,10 @@ void SocketAdapter::readHandler(quint32 readAvail)
          else
          {
             size_t unparsedLen = (size_t) (pEnd-pNext);
+            retval = true;
             if (unparsedLen > 0)
             {
-               if (pNext > pBegin)
+               if (pNext > pStartOfReceiveBuffer)
                {
                   memmove(pStartOfReceiveBuffer,pNext,unparsedLen);
                }
@@ -433,7 +444,7 @@ void SocketAdapter::readHandler(quint32 readAvail)
    else
    {
       setError(RMF_ERR_BAD_ALLOC, (qint64) readAvail);
-   }   
+   }
 }
 
 
@@ -483,10 +494,8 @@ const char *SocketAdapter::parseRemoteFileData(const char *pBegin, const char *p
             {
                if (msgLen == RMF_CMD_TYPE_LEN+RMF_HIGH_ADDRESS_SIZE)
                {
-                  quint32 address;
-                  quint32 cmdType;
-                  address = qFromBigEndian<quint32>((const uchar*)pNext);
-                  cmdType = qFromLittleEndian<quint32>( ((const uchar*) pNext)+RMF_HIGH_ADDRESS_SIZE);
+                  const quint32 address = qFromBigEndian<quint32>((const uchar*)pNext);
+                  const quint32 cmdType = qFromLittleEndian<quint32>( ((const uchar*) pNext)+RMF_HIGH_ADDRESS_SIZE);
                   if ( (address == (RMF_CMD_START_ADDR | RMF_CMD_HIGH_BIT) ) && (cmdType == RMF_CMD_ACK) )
                   {
                      m_isAcknowledgeSeen=true;
@@ -495,6 +504,10 @@ const char *SocketAdapter::parseRemoteFileData(const char *pBegin, const char *p
                         mReceiveHandler->onConnected(this);
                      }
                   }
+               }
+               else
+               {
+                   qWarning() << "[RMF_SOCKET_ADAPTER] Expected an ack, but got bad message size" << msgLen;
                }
             }
             else
