@@ -387,9 +387,10 @@ void Apx::NodeData::populatePortDataMap()
          for (int i=0;i<mInPortDataElements.length();i++)
          {            
             Q_ASSERT(ppNext<=ppEnd);
-            for (quint32 j=0; j<mInPortDataElements[i].length; j++)
+            PortDataElement& currPortElem = mInPortDataElements[i];
+            for (quint32 j=0; j<currPortElem.length; j++)
             {
-               *ppNext++=&mInPortDataElements[i];
+               *ppNext++=&currPortElem;
                Q_ASSERT(ppNext<=ppEnd);
             }
          }
@@ -404,9 +405,10 @@ void Apx::NodeData::populatePortDataMap()
          PortDataElement **ppEnd = mOutPortDataMap+numBytes;
          for (int i=0;i<mOutPortDataElements.length();i++)
          {
-            for (quint32 j=0; j<mOutPortDataElements[i].length; j++)
+            PortDataElement& currPortElem = mOutPortDataElements[i];
+            for (quint32 j=0; j<currPortElem.length; j++)
             {
-               *ppNext++=&mOutPortDataElements[i];
+               *ppNext++=&currPortElem;
                Q_ASSERT(ppNext<=ppEnd);
             }
          }

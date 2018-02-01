@@ -126,7 +126,7 @@ void FileManager::onConnected(TransmitHandler *transmitHandler)
 }
 
 void FileManager::onDisconnected()
-{   
+{
    mRemoteFileMap->clear();
 }
 
@@ -137,7 +137,7 @@ bool FileManager::onMsgReceived(const char *msgData, int msgLen)
    const char *pEnd = msgData+msgLen;
    quint32 address;
    bool more_bit;
-   int headerLen = RemoteFile::unpackHeader(pNext, pEnd, &address, &more_bit);
+   const int headerLen = RemoteFile::unpackHeader(pNext, pEnd, &address, &more_bit);
 
    if (headerLen > 0)
    {
@@ -188,16 +188,15 @@ void FileManager::processCmd(const char *pBegin, const char *pEnd)
             int numRequesteFiles = mRequestedFiles.length();
             for (int i=0;i<numRequesteFiles;i++)
             {
-               if (mRequestedFiles[i]->mName == remoteFile->mName)
+               if (requestedFile->mName == remoteFile->mName)
                {
-                  if (mRequestedFiles[i]->mLength != remoteFile->mLength)
+                  if (requestedFile->mLength != remoteFile->mLength)
                   {
                      qDebug("[FILEMANAGER] Requested file \"%s\" but length does not match. Expected %d, got %d",
-                            remoteFile->mName.toLatin1().constData(), mRequestedFiles[i]->mLength, remoteFile->mLength);
+                            remoteFile->mName.toLatin1().constData(), requestedFile->mLength, remoteFile->mLength);
                   }
                   else
                   {
-                     RemoteFile::File *requestedFile = mRequestedFiles[i];
                      requestedFile->mAddress=remoteFile->mAddress;
                      requestedFile->mFileType=remoteFile->mFileType;
                      requestedFile->mDigestType=remoteFile->mDigestType;
@@ -212,6 +211,7 @@ void FileManager::processCmd(const char *pBegin, const char *pEnd)
                   }
                }
             }
+         }
             mRemoteFileMap->insert(remoteFile);
          }
       }
