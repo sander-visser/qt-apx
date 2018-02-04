@@ -255,7 +255,11 @@ void FileManager::processFileWrite(quint32 address, bool more_bit, const char *d
    if ( (file != 0) && (file->isOpen == true) )
    {
       quint32 offset = address - file->mAddress;
-      file->write((const quint8*) data, offset, dataLen);
+      const int write_result = file->write((const quint8*) data, offset, dataLen);
+      if (write_result == (int)file->mLength)
+      {
+          emit remoteFileFullWrite(file->mName);
+      }
    }
 }
 

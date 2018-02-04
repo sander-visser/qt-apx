@@ -38,6 +38,7 @@ void Client::createLocalNode(const char *apxText)
    if (inPortDataFile != NULL)
    {
       mFileManager->requestRemoteFile(inPortDataFile);
+      QObject::connect(mFileManager, SIGNAL(remoteFileFullWrite(const QString&)), this, SLOT(onRemoteFileFullWrite(const QString&)));
    }
    mNodeData.setNodeHandler(this);
 }
@@ -118,6 +119,12 @@ void Client::onConnected()
 void Client::onDisconnected()
 {
    emit disconnected();
+}
+
+void Client::onRemoteFileFullWrite(const QString& fileName)
+{
+   Q_UNUSED(fileName);
+   emit requirePortsFullyRefreshed();
 }
 
 

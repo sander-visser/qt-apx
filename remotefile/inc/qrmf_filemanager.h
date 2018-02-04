@@ -47,6 +47,7 @@ namespace RemoteFile
       QList<RemoteFile::File*> mRequestedFiles;
    signals:
       void message(RemoteFile::Msg msg);
+      void remoteFileFullWrite(const QString& fileName);
    };
 }
 

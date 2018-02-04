@@ -52,12 +52,15 @@ namespace Apx
 private slots:
       void onConnected();
       void onDisconnected();
+      void onRemoteFileFullWrite(const QString& fileName);
 
   signals:
       void requirePortData(int portId, const QString &portName, const QVariant &value);
       void requirePortDataIdOnly(int portId, const QVariant &value);
       void connected();
       void disconnected();
+      // Emitted when all ports have been updated in one message
+      void requirePortsFullyRefreshed();
    };
 }
 
