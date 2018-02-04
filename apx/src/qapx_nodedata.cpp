@@ -94,14 +94,13 @@ bool Apx::NodeData::getRequirePortValue(int portIndex, QVariant &value)
  */
 void Apx::NodeData::inPortDataWriteNotify(quint32 offset, QByteArray &data)
 {
-
-   if ( offset+data.length() <= (quint32)mInPortDataMapLen)
+   quint32 dataLen = (quint32) data.length();
+   const quint32 endOffset=offset+dataLen;
+   if ( endOffset <= (quint32)mInPortDataMapLen)
    {
       QVariant value;
-      quint32 endOffset=offset+(quint32) data.length();
       while(offset<endOffset)
       {
-         quint32 dataLen = (quint32) data.length();
          const PortDataElement* const dataElement = mInPortDataMap[offset];
          if (dataElement != NULL)
          {
@@ -116,6 +115,7 @@ void Apx::NodeData::inPortDataWriteNotify(quint32 offset, QByteArray &data)
                if ( dataLen > dataElement->length)
                {
                   data.remove(0, dataElement->length);
+                  dataLen -= dataElement->length;
                }
                offset+=dataElement->length;
             }
