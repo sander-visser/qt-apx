@@ -18,7 +18,7 @@ namespace Apx
    {
       Q_OBJECT
    public:
-      Client(QObject *parent=NULL);
+      Client(QObject *parent=NULL, bool inPortNotifyWithName=true);
       virtual ~Client();
 
       void createLocalNode(const char *apxText);
@@ -27,7 +27,7 @@ namespace Apx
       void close();
 
       //NodeHandler API
-      void inPortDataNotification(NodeData *nodeData, QApxSimplePort *port, QVariant &value);
+      void inPortDataNotification(NodeData *nodeData, QApxSimplePort *port, const QVariant &value);
 
       //client user API
       Q_DECL_DEPRECATED void setProvidePort(int portId, QVariant &value);
@@ -40,6 +40,7 @@ namespace Apx
       Apx::NodeData *getNodeData() {return &mNodeData;}
 
    protected:
+      bool mInPortNotifyWithName;
       NodeData mNodeData;
       Apx::FileMap mLocalFileMap;
       Apx::FileMap mRemoteFileMap;
@@ -54,6 +55,7 @@ private slots:
 
   signals:
       void requirePortData(int portId, const QString &portName, const QVariant &value);
+      void requirePortDataIdOnly(int portId, const QVariant &value);
       void connected();
       void disconnected();
    };

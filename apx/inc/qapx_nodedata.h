@@ -51,7 +51,7 @@ namespace Apx
    class NodeHandler
    {
    public:
-      virtual void inPortDataNotification(NodeData *nodeData, QApxSimplePort *port, QVariant &value) = 0;
+      virtual void inPortDataNotification(NodeData *nodeData, QApxSimplePort *port, const QVariant &value) = 0;
    };
 
 
