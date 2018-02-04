@@ -326,7 +326,7 @@ char *SocketAdapter::prepareReceive(quint32 readLen)
  */
 void SocketAdapter::sendGreetingHeader()
 {
-   QByteArray greeting;   
+   QByteArray greeting;
    greeting.append(RMF_GREETING_START);
    greeting.append(RMF_NUMHEADER_FORMAT);
    greeting.append("32\n"); //use NumHeader32 format
@@ -448,7 +448,7 @@ void SocketAdapter::readHandler(quint32 readAvail)
 }
 
 
-const char *SocketAdapter::parseRemoteFileData(const char *pBegin, const char *pEnd)
+const char *SocketAdapter::parseRemoteFileData(const char* pBegin, const char* const pEnd)
 {
    if ( (pBegin == 0) || (pEnd == 0) )
    {
