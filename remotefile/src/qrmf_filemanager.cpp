@@ -18,19 +18,18 @@ void FileManagerWorker::onMessage(Msg msg)
    case RMF_MSG_CONNECT:
       mTransmitHandler = (RemoteFile::TransmitHandler*) msg.msgData3;
       break;
-   case RMF_MSG_FILEINFO:      
+   case RMF_MSG_FILEINFO:
       {
-         RemoteFile::File *file = (RemoteFile::File*) msg.msgData3;
+         const RemoteFile::File* const file = (RemoteFile::File*) msg.msgData3;
          if( (mTransmitHandler != NULL) && (file != NULL) )
          {
-            int msgLen = ((int)RMF_HIGH_ADDRESS_SIZE) + ((int)msg.msgData1);
+            const int msgLen = ((int)RMF_HIGH_ADDRESS_SIZE) + ((int)msg.msgData1);
             char *sendBuffer = mTransmitHandler->getSendBuffer(msgLen);
             if (sendBuffer != NULL)
             {
-               char *p=sendBuffer;
-               int headerLen = RemoteFile::packHeader(p, msgLen,RMF_CMD_START_ADDR,false);
-               p+=headerLen;
-               int payloadLen = RemoteFile::packFileInfo(p, msgLen-headerLen, *file);
+               int headerLen = RemoteFile::packHeader(sendBuffer, msgLen,RMF_CMD_START_ADDR,false);
+               sendBuffer+=headerLen;
+               int payloadLen = RemoteFile::packFileInfo(sendBuffer, msgLen-headerLen, *file);
                Q_ASSERT(payloadLen>0);
                mTransmitHandler->send(0,headerLen+payloadLen);
             }
@@ -40,14 +39,13 @@ void FileManagerWorker::onMessage(Msg msg)
       break;
    case RMF_MSG_FILEOPEN:
       {
-         int maxMsgLen = (int) RMF_HIGH_ADDRESS_SIZE + RMF_FILE_OPEN_LEN;
+         const int maxMsgLen = (int) RMF_HIGH_ADDRESS_SIZE + RMF_FILE_OPEN_LEN;
          char *sendBuffer = mTransmitHandler->getSendBuffer(maxMsgLen);
          if (sendBuffer != NULL)
          {
-            char *p=sendBuffer;
-            int headerLen = RemoteFile::packHeader(p, maxMsgLen,RMF_CMD_START_ADDR,false);
-            p+=headerLen;
-            int payloadLen = RemoteFile::packFileOpen(p, maxMsgLen-headerLen,msg.msgData1);
+            const int headerLen = RemoteFile::packHeader(sendBuffer, maxMsgLen,RMF_CMD_START_ADDR,false);
+            sendBuffer+=headerLen;
+            const int payloadLen = RemoteFile::packFileOpen(sendBuffer, maxMsgLen-headerLen,msg.msgData1);
             Q_ASSERT(payloadLen>0);
             mTransmitHandler->send(0,headerLen+payloadLen);
          }
@@ -56,19 +54,20 @@ void FileManagerWorker::onMessage(Msg msg)
    case RMF_MSG_WRITE_DATA:
       {
          quint32 address = (quint32) msg.msgData1;
-         QByteArray *dataBytes = (QByteArray*) msg.msgData3;
+         const QByteArray* const dataBytes = (QByteArray*) msg.msgData3;
          if( (mTransmitHandler != NULL) && (dataBytes != NULL) )
          {
-            int maxMsgLen = ((int)RMF_HIGH_ADDRESS_SIZE) + dataBytes->length();
+            const int payloadLen = dataBytes->length();
+            const int maxMsgLen = ((int)RMF_HIGH_ADDRESS_SIZE) + payloadLen;
             char *sendBuffer = mTransmitHandler->getSendBuffer(maxMsgLen);
             if (sendBuffer != NULL)
             {
                char *p=sendBuffer;
                int headerLen = RemoteFile::packHeader(p, maxMsgLen,address,false);
                p+=headerLen;
-               memcpy(p, dataBytes->constData(), dataBytes->length());
+               memcpy(p, dataBytes->constData(), payloadLen);
                //note: headerLen can be shorter here than RMF_ADDR_LEN.
-               mTransmitHandler->send(0,headerLen+dataBytes->length());
+               mTransmitHandler->send(0,headerLen+payloadLen);
             }
          }
          if (dataBytes !=NULL)

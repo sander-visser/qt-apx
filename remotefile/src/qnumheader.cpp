@@ -56,13 +56,12 @@ int encode16(char *pDest, int destLimit, quint16 value)
 int decode16(const char* const pBegin, const char* const pEnd, quint16 *value)
 {
    int retval = 0; //default is to read 0 bytes starting from pBegin
-   const char *pNext=pBegin;
    if( (pBegin != 0) && (pBegin<pEnd) && (value != NULL) )
    {
-      const char c = *pNext;
+      const uchar c = *(const uchar* const)pBegin;
       if(c & 0x80u) //is long_bit set?
       {
-         if(pNext+sizeof(quint16)<=pEnd)
+         if(pBegin+sizeof(quint16)<=pEnd)
          {
             retval = (int) sizeof(quint16);
             quint16 tmp = qFromBigEndian<quint16>(pBegin);
@@ -120,13 +119,12 @@ int encode32(char *pDest, int destLimit, quint32 value)
 int decode32(const char* const pBegin, const char* const pEnd, quint32 *value)
 {
    int retval = 0; //default is to read 0 bytes starting from pBegin
-   const char *pNext=pBegin;
    if( (pBegin != 0) && (pBegin<pEnd) && (value != NULL) )
    {
-      const char c = *pNext;
+      const uchar c = *(const uchar* const)pBegin;
       if(c & 0x80u) //is long_bit set?
       {
-         if(pNext+sizeof(quint32)<=pEnd)
+         if(pBegin+sizeof(quint32)<=pEnd)
          {
             retval = (int) sizeof(quint32);
             quint32 tmp = qFromBigEndian<quint32>(pBegin);
