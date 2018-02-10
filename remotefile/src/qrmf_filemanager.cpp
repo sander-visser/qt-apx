@@ -255,10 +255,18 @@ void FileManager::processFileWrite(quint32 address, bool more_bit, const char *d
    {
       quint32 offset = address - file->mAddress;
       const int write_result = file->write((const quint8*) data, offset, dataLen);
-      if (write_result == (int)file->mLength)
+      if (write_result!=(int)dataLen)
       {
-          emit remoteFileFullWrite(file->mName);
+         qDebug("[RMF_FILE_MANAGER] Incomplete write for address @%08X, %d %u", address, write_result, dataLen);
       }
+      else if (write_result == (int)file->mLength)
+      {
+         emit remoteFileFullWrite(file->mName);
+      }
+   }
+   else
+   {
+      qDebug("[RMF_FILE_MANAGER] Ignoring write for address not in opened file @%08X", address);
    }
 }
 
