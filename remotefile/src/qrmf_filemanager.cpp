@@ -67,7 +67,11 @@ void FileManagerWorker::onMessage(Msg msg)
                p+=headerLen;
                memcpy(p, dataBytes->constData(), payloadLen);
                //note: headerLen can be shorter here than RMF_ADDR_LEN.
-               mTransmitHandler->send(0,headerLen+payloadLen);
+               const int result = mTransmitHandler->send(0,headerLen+payloadLen);
+               if (result<0)
+               {
+                  qWarning() << "[RMF_FILE_MANAGER] send error" << result;
+               }
             }
          }
          if (dataBytes !=NULL)
@@ -77,7 +81,7 @@ void FileManagerWorker::onMessage(Msg msg)
       }
       break;
    default:
-      qDebug() << "Unhandled message" << msg.msgType;
+      qDebug() << "[RMF_FILE_MANAGER] Unhandled message" << msg.msgType;
    }
 }
 
@@ -167,7 +171,7 @@ void FileManager::processCmd(const char *pBegin, const char *pEnd)
    quint32 cmdType;
    if(pBegin+sizeof(quint32)>pEnd)
    {
-      qDebug("[FILEMANAGER] processCmd: invalid message length:%d",(int) (pEnd-pBegin) );
+      qDebug("[RMF_FILE_MANAGER] processCmd: invalid message length:%d",(int) (pEnd-pBegin) );
       return;
    }
    cmdType = qFromLittleEndian<quint32>((uchar*)pBegin);
@@ -179,7 +183,7 @@ void FileManager::processCmd(const char *pBegin, const char *pEnd)
          int result = RemoteFile::unpackFileInfo(pBegin, pEnd, *remoteFile);
          if (result <= 0)
          {
-            qDebug("[FILEMANAGER] unpackFileInfo failed with :%d",(int) result );
+            qDebug("[RMF_FILE_MANAGER] unpackFileInfo failed with :%d",(int) result );
             delete remoteFile;
          }
          else

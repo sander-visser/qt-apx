@@ -180,7 +180,12 @@ char *SocketAdapter::getSendBuffer(int msgLen)
 
 int SocketAdapter::send(int offset, int msgLen)
 {
-   if (mSendBufPtr != NULL) //have getSendBuffer been called?
+   int ret_val = 0;
+   if (mSendBufPtr == NULL) //has getSendBuffer not been called?
+   {
+      ret_val = -2; // Sequence error
+   }
+   else
    {
       char *pDest;
       int headerLen;
@@ -216,17 +221,23 @@ int SocketAdapter::send(int offset, int msgLen)
       case RMF_SOCKET_TYPE_NONE:
          break;
       case RMF_SOCKET_TYPE_TCP:
-         mTcpSocket->write((const char*) pDest, totalSize);
+         if (totalSize != mTcpSocket->write((const char*) pDest, totalSize))
+         {
+            ret_val = -3; // Socket did not accept the full write
+         }
          break;
       case RMF_SOCKET_TYPE_LOCAL:
-         mLocalSocket->write((const char*) pDest, totalSize);
+         if (totalSize != mLocalSocket->write((const char*) pDest, totalSize))
+         {
+            ret_val = -3; // Socket did not accept the full write
+         }
          break;
       default:
          break;
       }
       mSendBufPtr=NULL; //set mSendBufPtr back to NULL. The client must make another call to getSendBuffer before making another send
    }
-   return 0;
+   return ret_val;
 }
 
 
