@@ -6,12 +6,7 @@
 namespace RemoteFile
 {
 
-FileManagerWorker::FileManagerWorker(): mTransmitHandler(NULL)
-{
-
-}
-
-void FileManagerWorker::onMessage(Msg msg)
+void FileManager::onMessage(const Msg& msg)
 {
    switch(msg.msgType)
    {
@@ -86,17 +81,16 @@ void FileManagerWorker::onMessage(Msg msg)
 }
 
 FileManager::FileManager(FileMap2 *localFileMap, FileMap2 *remoteFileMap):
+   mTransmitHandler(NULL),
    mLocalFileMap(localFileMap),
-   mRemoteFileMap(remoteFileMap)
+   mRemoteFileMap(remoteFileMap),
+   mRequestedFiles()
 {
-   QObject::connect(this, &FileManager::message, &mWorkerThread, &FileManagerWorker::onMessage);
-   mWorkerThread.start();
+   QObject::connect(this, &FileManager::message, this, &FileManager::onMessage);
 }
 
 FileManager::~FileManager()
 {
-   mWorkerThread.quit();
-   mWorkerThread.wait();
 }
 
 void FileManager::attachLocalFile(File *file)
