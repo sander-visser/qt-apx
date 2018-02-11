@@ -2,7 +2,6 @@
 #define QRMF_PROTO_H
 
 #include <QtGlobal>
-#include "qrmf_base.h"
 #include "qrmf_file.h"
 
 namespace RemoteFile
