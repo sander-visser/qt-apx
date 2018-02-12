@@ -8,14 +8,16 @@ public:
    virtual ~QApxSimplePort();
    const char *getName() const {return mName;}
    const char *getDataSignature() const {return mDsg;}
-   const char *getAttr() const {return mAttr;}
+   const char *getAttrInitValueAsRaw() const {return mAttrInit;}
+   const char *getAttr() const {return mAttrFull;}
    virtual bool isRequire() const = 0;
    int getPortIndex() const {return mPortIndex;}
    void setPortIndex(int value){mPortIndex=value;}
 protected:
-   char *mName; //strong reference to name
-   char *mDsg; //strong reference to data signature
-   char *mAttr; //strong reference to port attribute string
+   const char *mName; //strong reference to name
+   const char *mDsg; //strong reference to data signature
+   const char *mAttrFull; //strong reference to full port attribute string
+   const char *mAttrInit; //strong reference to init part of port attribute string
    int mPortIndex;
 };
 
