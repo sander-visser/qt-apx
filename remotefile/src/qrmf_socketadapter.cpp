@@ -499,6 +499,8 @@ const char *SocketAdapter::parseRemoteFileData(const char* pBegin, const char* c
       {
          const char *pNext = pBegin+headerLen;
          quint32 remain =(quint32) (pEnd-pNext);
+         Q_ASSERT(headerLen>0);
+         Q_ASSERT(msgLen>0);
          if(remain>=(quint32)msgLen)
          {
             if (m_isAcknowledgeSeen == false)
