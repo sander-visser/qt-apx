@@ -205,17 +205,17 @@ int SocketAdapter::send(int offset, int msgLen)
          headerLen=mMaxNumHeaderLen;
       }
       pDest-=headerLen;
+      totalSize=headerLen+msgLen;
       if(mNumHeaderBits == 16)
       {
          int result = NumHeader::encode16(pDest, headerLen, (quint16) msgLen);
-         Q_ASSERT(result == headerLen);
+         Q_ASSERT(result == headerLen); (void)result;
       }
       else
       {
          int result = NumHeader::encode32(pDest, headerLen, (quint32) msgLen);
-         Q_ASSERT(result == headerLen);
+         Q_ASSERT(result == headerLen); (void)result;
       }
-      totalSize=headerLen+msgLen;
       switch(mSocketType)
       {
       case RMF_SOCKET_TYPE_NONE:

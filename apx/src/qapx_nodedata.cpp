@@ -379,37 +379,32 @@ void Apx::NodeData::populatePortDataMap()
       if (mInPortDataFile != NULL)
       {
          mInPortDataMapLen = mInPortDataFile->mLength; //number of elements, not number of bytes
-         size_t numBytes = mInPortDataMapLen*sizeof(PortDataElement**);
          mInPortDataMap = new PortDataElement*[mInPortDataMapLen];
          PortDataElement **ppNext = mInPortDataMap;
          Q_ASSERT(mInPortDataMap != NULL);
-         PortDataElement **ppEnd = mInPortDataMap+numBytes;
          for (int i=0;i<mInPortDataElements.length();i++)
-         {            
-            Q_ASSERT(ppNext<=ppEnd);
+         {
             PortDataElement& currPortElem = mInPortDataElements[i];
             for (quint32 j=0; j<currPortElem.length; j++)
             {
+               Q_ASSERT(ppNext<(mInPortDataMap+mInPortDataMapLen*sizeof(PortDataElement**)));
                *ppNext++=&currPortElem;
-               Q_ASSERT(ppNext<=ppEnd);
             }
          }
       }
       if (mOutPortDataFile != NULL)
       {
          mOutPortDataMapLen = mOutPortDataFile->mLength; //number of elements, not number of bytes
-         size_t numBytes = mOutPortDataMapLen*sizeof(PortDataElement**);
          mOutPortDataMap = new PortDataElement*[mOutPortDataMapLen];
          PortDataElement **ppNext = mOutPortDataMap;
          Q_ASSERT(mOutPortDataMap != NULL);
-         PortDataElement **ppEnd = mOutPortDataMap+numBytes;
          for (int i=0;i<mOutPortDataElements.length();i++)
          {
             PortDataElement& currPortElem = mOutPortDataElements[i];
             for (quint32 j=0; j<currPortElem.length; j++)
             {
+               Q_ASSERT(ppNext<(mOutPortDataMap+mOutPortDataMapLen*sizeof(PortDataElement**)));
                *ppNext++=&currPortElem;
-               Q_ASSERT(ppNext<=ppEnd);
             }
          }
       }
