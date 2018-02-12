@@ -106,7 +106,7 @@ namespace Apx
       void cleanup();
       void populatePortDataMap();
       void writeProvidePortRaw(int portId,const char *pSrc, int length);
-#ifdef UNIT_TEST
+#ifdef APX_UNIT_TEST
    public:
 #else
    protected:
