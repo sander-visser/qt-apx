@@ -432,7 +432,6 @@ void SocketAdapter::readHandler(quint32 readAvail)
          else
          {
             size_t unparsedLen = (size_t) (pEnd-pNext);
-            retval = true;
             if (unparsedLen > 0)
             {
                if (pNext > pStartOfReceiveBuffer)

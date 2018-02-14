@@ -185,6 +185,7 @@ void FileManager::processCmd(const char *pBegin, const char *pEnd)
             int numRequesteFiles = mRequestedFiles.length();
             for (int i=0;i<numRequesteFiles;i++)
             {
+               RemoteFile::File* requestedFile = mRequestedFiles[i];
                if (requestedFile->mName == remoteFile->mName)
                {
                   if (requestedFile->mLength != remoteFile->mLength)
@@ -208,7 +209,6 @@ void FileManager::processCmd(const char *pBegin, const char *pEnd)
                   }
                }
             }
-         }
             mRemoteFileMap->insert(remoteFile);
          }
       }
