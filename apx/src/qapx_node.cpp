@@ -1,4 +1,6 @@
 #include "qapx_node.h"
+#include <QDebug>
+
 namespace Apx
 {
    Node::Node()
@@ -52,14 +54,30 @@ namespace Apx
 
    void Node::appendRequirePort(QApxSimpleRequirePort *port)
    {
-      mRequirePorts.append(port);
-      mPortMap.insert(QString(port->getName()),dynamic_cast<QApxSimplePort*>(port));
+      QApxSimplePort* simplePort = static_cast<QApxSimplePort*>(port);
+      if (simplePort!=nullptr)
+      {
+         mRequirePorts.append(simplePort);
+         mPortMap.insert(QString(simplePort->getName()),simplePort);
+      }
+      else
+      {
+         qDebug() << "appendRequirePort called with null";
+      }
    }
 
    void Node::appendProvidePort(QApxSimpleProvidePort *port)
    {
-      mProvidePorts.append(port);
-      mPortMap.insert(QString(port->getName()),dynamic_cast<QApxSimplePort*>(port));
+      QApxSimplePort* simplePort = static_cast<QApxSimplePort*>(port);
+      if (simplePort!=nullptr)
+      {
+         mProvidePorts.append(simplePort);
+         mPortMap.insert(QString(simplePort->getName()),simplePort);
+      }
+      else
+      {
+         qDebug() << "appendProvidePort called with null";
+      }
    }
 
    QApxSimplePort *Node::getRequirePortById(int i) const
