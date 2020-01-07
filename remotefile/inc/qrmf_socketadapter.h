@@ -33,6 +33,7 @@
 #define RMF_ERR_BAD_MSG                5u
 #define RMF_ERR_BAD_ALLOC              6u
 #define RMF_ERR_MSG_LEN_TOO_LONG       7u
+#define RMF_ERR_SOCKET_OVERRUN         8u
 
 namespace RemoteFile
 {

@@ -306,12 +306,16 @@ void SocketAdapter::onReadyread()
    qint64 readAvail = getSocketReadAvail();
    while( (readAvail > 0) && (mErrorCode == RMF_ERR_NONE))
    {
+      if (readAvail >= RMF_SOCKET_BUFFER_SIZE_LIMIT)
+      {
+         setError(RMF_ERR_SOCKET_OVERRUN);
+         break;
+      }
       readHandler((quint32)readAvail);
       readAvail = getSocketReadAvail();
    }
    if ( (mErrorCode==RMF_ERR_NONE) && (readAvail < 0) )
    {
-      qDebug() << "getSocketReadAvail failed\n";
       setError(RMF_ERR_SOCKET_READ_AVAIL_FAIL);
    }
    if (mErrorCode != RMF_ERR_NONE)
@@ -605,6 +609,9 @@ void SocketAdapter::setError(quint32 error, qint64 errorExtra)
    case RMF_ERR_SOCKET_READ_FAIL:
       qCritical() << "[RMF_SOCKET_ADAPTER] Error while reading from socket";
       break;
+   case RMF_ERR_SOCKET_READ_AVAIL_FAIL:
+      qCritical() << "[RMF_SOCKET_ADAPTER] Error while polling socket for bytes possible to read";
+      break;
    case RMF_ERR_SOCKET_EVENT:
       mLastSocketError = (QAbstractSocket::SocketError) errorExtra;
 #ifndef RMF_SOCKET_VERBOSE
@@ -629,6 +636,9 @@ void SocketAdapter::setError(quint32 error, qint64 errorExtra)
       break;
    case RMF_ERR_MSG_LEN_TOO_LONG:
       qCritical() << "[RMF_SOCKET_ADAPTER] Error: Bad message length - check RMF_MAX_EXPECTED_MESSAGE_LENGTH" << errorExtra;
+      break;
+   case RMF_ERR_SOCKET_OVERRUN:
+      qCritical() << "[RMF_SOCKET_ADAPTER] Error: Socket overrun - check RMF_SOCKET_BUFFER_SIZE_LIMIT";
       break;
    default:
       qCritical() << "[RMF_SOCKET_ADAPTER] Error: Other" << error;
