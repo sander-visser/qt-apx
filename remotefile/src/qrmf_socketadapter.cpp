@@ -119,6 +119,8 @@ int SocketAdapter::connectTcp(const QHostAddress& address, quint16 port)
       QObject::connect(mTcpSocket, SIGNAL(readyRead(void)),this, SLOT(onReadyread(void)));
       m_isAcknowledgeSeen=false;
       mTcpSocket->connectToHost(mTcpAddress, mTcpPort);
+      // Setting socket options after connectToHost due to QTBUG-67576
+      mTcpSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
       return 0;
    }
    else if (mSocketType == RMF_SOCKET_TYPE_TCP)
