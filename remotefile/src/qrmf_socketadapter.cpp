@@ -200,15 +200,16 @@ int SocketAdapter::getSendAvail()
 
 char *SocketAdapter::getSendBuffer(int msgLen)
 {
-   if (msgLen>RMF_SOCKET_ADAPTER_MAX_BUF_LEN)
+   if (msgLen > RMF_SOCKET_ADAPTER_MAX_BUF_LEN)
    {
       return nullptr; //never accept too large size request
    }
-   if (msgLen>mSendBuffer.length())
+   const int neededSendBufferSize = msgLen + mMaxNumHeaderLen;
+   if (neededSendBufferSize > mSendBuffer.length())
    {
-      mSendBuffer.resize(msgLen+mMaxNumHeaderLen);
+      mSendBuffer.resize(neededSendBufferSize);
    }
-   mSendBufPtr = mSendBuffer.data()+mMaxNumHeaderLen;
+   mSendBufPtr = mSendBuffer.data() + mMaxNumHeaderLen;
    return mSendBufPtr; //always reserve 2 or 4 bytes before the buffer given to requester. This will give us space for writing numHeader in send function
 }
 
